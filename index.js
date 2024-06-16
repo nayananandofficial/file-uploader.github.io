@@ -17,7 +17,7 @@ app.use(express.static('public'));
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, 'public', 'img'));
+        cb(null, path.join(path.resolve(), 'public', 'img'));
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
@@ -46,7 +46,7 @@ app.get('/images', async (req, res) => {
         });
         res.json(images);
     } catch(error) {
-res.status(500).json({error: 'failed to read image directiry'});
+            res.status(500).json({error: 'failed to read image directiry'});
     }
 });
 
