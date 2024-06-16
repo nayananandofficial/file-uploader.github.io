@@ -1,7 +1,7 @@
 {
   "name": "grid-project-2",
   "version": "1.0.0",
-  "description": "",
+  "description": "This website allows you to upload images",
   "main": "index.js",
   "type": "module",
   "scripts": {
