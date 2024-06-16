@@ -21,13 +21,13 @@ header {
     padding: 20px;
 }
 
-/* .wrapper {
+.wrapper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 30px;
-} */
+}
 
-/* .item {
+.item {
     overflow: hidden;
 }
 
@@ -35,4 +35,15 @@ header {
     width: 100%;
     height: 100%;
     object-fit: cover;
-} */
+}
+
+#uploadForm{
+    display: flex;
+    padding: 50px;
+    margin: auto ;
+}
+
+button{
+    width: 100px;
+    margin: 0;
+}

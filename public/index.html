@@ -12,53 +12,64 @@
             <h1>One Piece Bounty Posters</h1>
         </header>
 
-        <div class="wrapper" id="image-wrapper"></div>
-
         <form id="uploadForm" method="post" enctype="multipart/form-data" action="/upload">
             <input type="file" name="image" required>
             <button type="submit">Upload Image</button>
         </form>
+        
+        <div class="wrapper" id="image-wrapper"></div>
+
+        
     </div>
 
     <script>
-        // Fetch and display images
-        document.getElementById('uploadForm').addEventListener('submit', (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    fetch('/upload', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'Authorization': 'Basic ' + btoa('admin:password')
-        }
-    }).then(() => {
-        // Fetch the latest images and display them
-        fetchImages();
-    });
-});
-
-// Function to fetch and display images
+        // Fetch and display images sorted by file name in descending order
 function fetchImages() {
     fetch('/images')
         .then(response => response.json())
         .then(images => {
+            // Sort images based on file name in descending order
+            images.sort((a, b) => {
+                // Extract numeric part of file name
+                const regex = /\d+/g;
+                const numA = parseInt(a.match(regex)[0], 10);
+                const numB = parseInt(b.match(regex)[0], 10);
+                return numB - numA; // Sort in descending order
+            });
+
+            // Clear existing content in wrapper
             const wrapper = document.getElementById('image-wrapper');
-            wrapper.innerHTML = ''; // Clear the wrapper
+            wrapper.innerHTML = '';
+
+            // Create divs and append images
             images.forEach(image => {
-                // Create a new div for each image
                 const div = document.createElement('div');
                 div.classList.add('item');
                 const img = document.createElement('img');
                 img.src = `img/${image}`;
                 img.alt = image;
                 div.appendChild(img);
-                wrapper.appendChild(div); // Append the new div to the wrapper
+                wrapper.appendChild(div);
             });
         });
-}
+    }
 
-// Initial fetch of images
-fetchImages();
+        document.getElementById('uploadForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': 'Basic ' + btoa('admin:password')
+                }
+            }).then(() => {
+                fetchImages();
+            });
+        });
+
+        // Initial fetch of images
+        fetchImages();
     </script>
 </body>
 </html>
