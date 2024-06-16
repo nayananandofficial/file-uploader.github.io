@@ -1,61 +1,56 @@
-//Import the required modules:
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
-import basicAuth from 'basic-auth';
 
-//Create an Express application instance and set the port number to 3000:
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const port = 3000;
 
-//Define middleware for basic authentication:
-const auth = (req, res, next) => {
-    const user = basicAuth(req);
-    if (!user || user.name !== 'admin' || user.pass !== 'password') {
-        res.set('WWW-Authenticate', 'Basic realm="401"');
-        res.status(401).send('Authentication required.');
-        return;
-    }
-    next();
-};
-
-//Configure Multer to store uploaded files:
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/img');
+        cb(null, path.join(__dirname, 'public', 'img'));
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
     }
 });
 
-//Create a Multer instance with the specified storage configuration.
 const upload = multer({ storage });
 
-//Serve static files from the public directory:
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-
-//Define a POST route for file uploads:
-app.post('/upload', auth, upload.single('image'), (req, res) => {
+app.post('/upload', upload.single('image'), (req, res) => {
     res.redirect('/');
 });
 
-//Define a GET route to fetch the list of images:
 app.get('/images', (req, res) => {
-    fs.readdir('public/img', (err, files) => {
+    const dirPath = path.join(__dirname, 'public', 'img');
+    fs.readdir(dirPath, (err, files) => {
         if (err) {
-            res.status(500).send('Server error.');
-            return;
+            return res.status(500).json({ error: 'Failed to read directory' });
         }
-        res.json(files);
+        const sortedFiles = files.sort((a, b) => {
+            const regex = /\d+/g;
+            const matchA = a.match(regex);
+            const matchB = b.match(regex);
+            
+            if (matchA && matchB) {
+                const numA = parseInt(matchA[0], 10);
+                const numB = parseInt(matchB[0], 10);
+                return numB - numA; // Sort in descending order
+            }
+            
+            // If one or both filenames don't contain numbers, sort alphabetically
+            return a.localeCompare(b);
+        });
+        res.json(sortedFiles);
     });
 });
 
-
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
-
-
