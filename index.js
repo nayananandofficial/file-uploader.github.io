@@ -1,13 +1,19 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import basicAuth from 'express-basic-auth';
 import fs from 'fs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(basicAuth({
+    user: {'admin':'password'},
+    challenge: true
+}));
+
+app.use(express.static('public'));
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -20,37 +26,31 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.post('/upload', upload.single('image'), (req, res) => {
     res.redirect('/');
 });
 
-app.get('/images', (req, res) => {
-    const dirPath = path.join(__dirname, 'public', 'img');
-    fs.readdir(dirPath, (err, files) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to read directory' });
-        }
-        const sortedFiles = files.sort((a, b) => {
+app.get('/images', async (req, res) => {
+
+    try{
+        const imgPath = path.join(path.resolve(), 'public', 'img');
+        const files = await fs.readdir(imgPath);
+        const images = files.filter(image => {
+            const regex = /^\d+\.(jpg|jpeg|png|gif)$/i;
+            return regex.test(image);
+        }).sort((a, b) => {
             const regex = /\d+/g;
-            const matchA = a.match(regex);
-            const matchB = b.match(regex);
-            
-            if (matchA && matchB) {
-                const numA = parseInt(matchA[0], 10);
-                const numB = parseInt(matchB[0], 10);
-                return numB - numA; // Sort in descending order
-            }
-            
-            // If one or both filenames don't contain numbers, sort alphabetically
-            return a.localeCompare(b);
+            const numA = parseInt(a.match(regex)[0], 10);
+            const numB = parseInt(b.match(regex)[0], 10);
+            return numB - numA;
         });
-        res.json(sortedFiles);
-    });
+        res.json(images);
+    } catch(error) {
+res.status(500).json({error: 'failed to read image directiry'});
+    }
 });
 
-const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
