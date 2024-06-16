@@ -1,56 +1,57 @@
 import express from 'express';
+import basicAuth from 'express-basic-auth';
 import multer from 'multer';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import fs from 'fs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
+const port = 3000;
+
+// Middleware for Basic Authentication
+app.use(basicAuth({
+    users: { 'admin': 'password' },
+    challenge: true,
+    unauthorizedResponse: 'Unauthorized'
+}));
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, 'public', 'img'));
+        cb(null, path.join(path.resolve(), 'public', 'img'));
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
     }
 });
 
-const upload = multer({ storage });
-
-app.use(express.static(path.join(__dirname, 'public')));
+const upload = multer({ storage: storage });
 
 app.post('/upload', upload.single('image'), (req, res) => {
-    res.redirect('/');
+    res.send('Image uploaded successfully');
 });
 
 app.get('/images', (req, res) => {
-    const dirPath = path.join(__dirname, 'public', 'img');
-    fs.readdir(dirPath, (err, files) => {
+    fs.readdir(path.join(path.resolve(), 'public', 'img'), (err, files) => {
         if (err) {
-            return res.status(500).json({ error: 'Failed to read directory' });
+            return res.status(500).send('Unable to scan directory');
         }
-        const sortedFiles = files.sort((a, b) => {
+
+        // Filter out files that don't have numeric parts
+        files = files.filter(file => /\d+/.test(file));
+
+        // Sort files numerically by their name
+        files.sort((a, b) => {
             const regex = /\d+/g;
-            const matchA = a.match(regex);
-            const matchB = b.match(regex);
-            
-            if (matchA && matchB) {
-                const numA = parseInt(matchA[0], 10);
-                const numB = parseInt(matchB[0], 10);
-                return numB - numA; // Sort in descending order
-            }
-            
-            // If one or both filenames don't contain numbers, sort alphabetically
-            return a.localeCompare(b);
+            const numA = parseInt(a.match(regex)[0], 10);
+            const numB = parseInt(b.match(regex)[0], 10);
+            return numB - numA;
         });
-        res.json(sortedFiles);
+
+        res.json(files);
     });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.use(express.static('public'));
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
