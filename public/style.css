@@ -3,22 +3,19 @@
     padding: 0;
     box-sizing: border-box;
 }
-
 body {
-    margin: 50px;
     font-family: 'Times New Roman', Times, serif;
 }
 
 .container {
-    margin: auto;
+    margin: 50px;
     max-width: 1136px;
 }
 
 header {
     text-align: center;
-    background-color: rgb(233, 199, 112);
-    margin: 30px 0;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
 }
 
 .wrapper {
