@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rokkitt:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <title>Modern Grid Layout</title>
 </head>
 <body>
 
     <header>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar fixed-top navbar-expand-lg">
             <div class="container-fluid">
-              <img src="https://i.pinimg.com/564x/0b/30/d1/0b30d11f636f463306cff006e2cd0d8a.jpg" alt="logo" width="100"height="60">  
+              <img src="https://i.pinimg.com/564x/55/3c/0c/553c0ccd4e8605405087878cf79d6297.jpg" alt="logo" width="100"height="60">  
               <a class="navbar-brand" href="#"></a>
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -20,13 +23,13 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">One Peice Bounty Poster</a>
+                    <a class="nav-link active fs-2 text-light" aria-current="page" href="#">Ø₦EPIE€E FA₦$ ₲A₺₺ERY</a>
                   </li>
                 </ul>
                 <form class="d-flex" role="search">
                   <input class="form-control me-2" type="text" placeholder="Username" aria-label="Search">
                   <input class="form-control me-2" type="password" placeholder="Password" aria-label="Search">
-                  <button class="btn btn-outline-success" type="submit">Login</button>
+                  <button class="btn btn-primary bg-gradient" type="submit">Login</button>
                 </form>
               </div>
             </div>
@@ -34,12 +37,14 @@
     </header>
     <div class="container">
        
-
-        <form id="uploadForm" method="post" enctype="multipart/form-data" action="/upload">
-            <input type="file" name="image" required>
-            <button type="submit">Upload Image</button>
-        </form>
-
+        <div class="d-flex justify-content-center">
+            <form id="uploadForm" method="post" enctype="multipart/form-data" action="/upload">
+                <input class="form-control btn ms-5 upload-file" type="file" name="image" required >
+                <button class="btn ms-5 upload-btn" type="submit"  style="width:177px">Upload Image</button>
+            </form>
+    
+        </div>
+        
         <div class="wrapper" id="image-wrapper"></div>
 
        
