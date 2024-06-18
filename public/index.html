@@ -12,35 +12,46 @@
     <title>Modern Grid Layout</title>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <nav class="navbar fixed-top navbar-expand-lg">
-                <div class="container-fluid">
-                    <img src="https://i.pinimg.com/564x/55/3c/0c/553c0ccd4e8605405087878cf79d6297.jpg" alt="logo" width="100" height="60">
-                    <a class="navbar-brand" href="#"></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link active fs-2 text-light" aria-current="page" href="#">Ø₦EPIE€E FA₦$ ₲A₺₺ERY</a>
-                            </li>
-                        </ul>
-                        <form id="uploadForm" class="d-flex" role="search" method="post" enctype="multipart/form-data" action="/upload">
-                            <input class="form-control me-2" type="text" placeholder="Username" aria-label="Search">
-                            <input class="form-control me-2" type="password" placeholder="Password" aria-label="Search">
-                            <button class="btn btn-primary bg-gradient" type="submit">Login</button>
-                        </form>
-                    </div>
-                </div>
-            </nav>
-        </header>
+    <header>
+        <nav class="navbar fixed-top navbar-expand-md">
+            <div class="container-fluid">
+                <img src="https://i.pinimg.com/564x/55/3c/0c/553c0ccd4e8605405087878cf79d6297.jpg" alt="logo" width="130" height="80">
+                <a class="navbar-brand" href="#"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active fs-1 text-light ms-5" aria-current="page" href="#">Ø₦EPIE€E FA₦$ ₲A₺₺ERY</a>
+                        </li>
+                    </ul>
+                    <form id="uploadForm" class="d-flex" role="search" method="post" enctype="multipart/form-data" action="/upload">
 
+                        <input class="form-control me-2" type="file" name="image" required>
+
+                        <button class="btn btn-primary bg-gradient" type="submit">Submit</button>
+                       
+                        
+                    </form>
+                    <form>
+                        <button class="btn btn-primary bg-gradient" type="submit">Login</button>
+
+                    </form>
+                </div>
+            </div>
+        </nav>
+        
+    </header>
+    <div class="container">
         <div class="wrapper" id="image-wrapper">
             <!-- Dynamic images will be populated here -->
         </div>
     </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
 
     <script type="module">
         async function fetchImages() {
