@@ -12,56 +12,87 @@
     <title>Modern Grid Layout</title>
 </head>
 <body>
-
+<div class="container">
     <header>
         <nav class="navbar fixed-top navbar-expand-lg">
             <div class="container-fluid">
-              <img src="https://i.pinimg.com/564x/55/3c/0c/553c0ccd4e8605405087878cf79d6297.jpg" alt="logo" width="100"height="60">  
-              <a class="navbar-brand" href="#"></a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item">
-                    <a class="nav-link active fs-2 text-light" aria-current="page" href="#">Ø₦EPIE€E FA₦$ ₲A₺₺ERY</a>
-                  </li>
-                </ul>
-                <form class="d-flex" role="search">
-                  <input class="form-control me-2" type="text" placeholder="Username" aria-label="Search">
-                  <input class="form-control me-2" type="password" placeholder="Password" aria-label="Search">
-                  <button class="btn btn-primary bg-gradient" type="submit">Login</button>
-                </form>
-              </div>
+                <img src="https://i.pinimg.com/564x/55/3c/0c/553c0ccd4e8605405087878cf79d6297.jpg" alt="logo" width="100" height="60">
+                <a class="navbar-brand" href="#"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active fs-2 text-light" aria-current="page" href="#">Ø₦EPIE€E FA₦$ ₲A₺₺ERY</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="text" placeholder="Username" aria-label="Search">
+                        <input class="form-control me-2" type="password" placeholder="Password" aria-label="Search">
+                        <button class="btn btn-primary bg-gradient" type="submit">Login</button>
+                    </form>
+                </div>
             </div>
-          </nav>
+        </nav>
     </header>
-    <div class="container">
-       
-        <div class="d-flex justify-content-center">
-            <form id="uploadForm" method="post" enctype="multipart/form-data" action="/upload">
-                <input class="form-control btn ms-5 upload-file" type="file" name="image" required >
-                <button class="btn ms-5 upload-btn" type="submit"  style="width:177px">Upload Image</button>
-            </form>
-    
-        </div>
-        
-        <div class="wrapper" id="image-wrapper"></div>
 
-       
+    <div class="wrapper" id="image-wrapper">
+        <!-- Content from master branch -->
+        <script type="module">
+            async function fetchImages() {
+                try {
+                    const response = await fetch('/images', {
+                        headers: {
+                            'Authorization': 'Basic ' + btoa('admin:password')
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch images');
+                    }
+                    const images = await response.json();
+                    const wrapper = document.getElementById('image-wrapper');
+                    wrapper.innerHTML = '';
+                    images.forEach(image => {
+                        const div = document.createElement('div');
+                        div.classList.add('item');
+                        const img = document.createElement('img');
+                        img.src = `img/${image}`;
+                        img.alt = image;
+                        div.appendChild(img);
+                        wrapper.appendChild(div);
+                    });
+                } catch (error) {
+                    console.error('Error fetching images:', error);
+                }
+            }
+
+            document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Authorization': 'Basic ' + btoa('admin:password')
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to upload image');
+                    }
+                    fetchImages();
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                }
+            });
+
+            // Initial fetch of images
+            fetchImages();
+        </script>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    <script>
-        function fetchImages() {
-    fetch('/images')
-        .then(response => response.json())
-        .then(images => {
-            const wrapper = document.getElementById('image-wrapper');
-            wrapper.innerHTML = '';
-            images.forEach(image => {
-                // Check if the file ends with a valid image extension
-                if (/\.(jpg|jpeg|png|gif)$/i.test(image)) {
+</div>
+
                     const div = document.createElement('div');
                     div.classList.add('item');
                     const img = document.createElement('img');
@@ -69,26 +100,33 @@
                     img.alt = image;
                     div.appendChild(img);
                     wrapper.appendChild(div);
-                }
-                    });
-                })
-                .catch(error => console.error('Error fetching images:', error));
+                });
+            } catch (error) {
+                console.error('Error fetching images:', error);
+            }
         }
 
-        document.getElementById('uploadForm').addEventListener('submit', (event) => {
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
             event.preventDefault();
             const formData = new FormData(event.target);
-            fetch('/upload', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Authorization': 'Basic ' + btoa('admin:password')
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Authorization': 'Basic ' + btoa('admin:password')
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to upload image');
                 }
-            }).then(() => {
                 fetchImages();
-            }).catch(error => console.error('Error uploading image:', error));
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
         });
 
+        // Initial fetch of images
         fetchImages();
     </script>
 </body>
