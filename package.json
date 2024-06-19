@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "basic-auth": "^2.0.1",
+    "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-basic-auth": "^1.2.1",
     "multer": "^1.4.5-lts.1"

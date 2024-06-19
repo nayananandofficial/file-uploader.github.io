@@ -1,57 +1,69 @@
 import express from 'express';
-import basicAuth from 'express-basic-auth';
-import multer from 'multer';
 import path from 'path';
+import multer from 'multer';
+import basicAuth from 'express-basic-auth';
 import fs from 'fs';
 
 const app = express();
-const port = 3000;
+const __dirname = path.resolve();
 
-// Middleware for Basic Authentication
+// Set up view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// Serve static files from 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Basic Auth Middleware
 app.use(basicAuth({
     users: { 'admin': 'password' },
     challenge: true,
-    unauthorizedResponse: 'Unauthorized'
 }));
 
+// Define storage for multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(path.resolve(), 'public', 'img'));
+        cb(null, path.join(__dirname, 'public', 'img'));
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname);
+        cb(null, Date.now() + '-' + file.originalname);
     }
 });
 
 const upload = multer({ storage: storage });
 
+// Handle file upload
 app.post('/upload', upload.single('image'), (req, res) => {
-    res.send('Image uploaded successfully');
+    res.redirect('/');
 });
 
+// Fetch images route
 app.get('/images', (req, res) => {
-    fs.readdir(path.join(path.resolve(), 'public', 'img'), (err, files) => {
+    fs.readdir(path.join(__dirname, 'public', 'img'), (err, files) => {
         if (err) {
             return res.status(500).send('Unable to scan directory');
         }
-
-        // Filter out files that don't have numeric parts
-        files = files.filter(file => /\d+/.test(file));
-
-        // Sort files numerically by their name
-        files.sort((a, b) => {
-            const regex = /\d+/g;
-            const numA = parseInt(a.match(regex)[0], 10);
-            const numB = parseInt(b.match(regex)[0], 10);
-            return numB - numA;
+        const images = files.filter(file => file.match(/\d+/)).sort((a, b) => {
+            return parseInt(b.match(/\d+/)[0], 10) - parseInt(a.match(/\d+/)[0], 10);
         });
-
-        res.json(files);
+        res.json(images);
     });
 });
 
-app.use(express.static('public'));
+// Render index.ejs
+app.get('/', (req, res) => {
+    fs.readdir(path.join(__dirname, 'public', 'img'), (err, files) => {
+        if (err) {
+            return res.status(500).send('Unable to scan directory');
+        }
+        const images = files.filter(file => file.match(/\d+/)).sort((a, b) => {
+            return parseInt(b.match(/\d+/)[0], 10) - parseInt(a.match(/\d+/)[0], 10);
+        });
+        res.render('index', { images: images });
+    });
+});
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
